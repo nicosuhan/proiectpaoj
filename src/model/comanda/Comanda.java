@@ -8,15 +8,16 @@ import java.util.List;
 
 public abstract class Comanda {
     protected int id;
-    protected String numeClient;
+    protected int utilizatorId;
+    public String numeClient;
     protected List<Produs> produse;
     protected LocalDateTime dataComanda;
     protected double total;
     protected String status; // ex: plasata, in procesare, livrata
 
-    public Comanda(int id, String numeClient) {
+    public Comanda(int id, int utilizatorId) {
         this.id = id;
-        this.numeClient = numeClient;
+        this.utilizatorId = utilizatorId;
         this.produse = new ArrayList<>();
         this.dataComanda = LocalDateTime.now();
         this.total = 0;
@@ -57,4 +58,15 @@ public abstract class Comanda {
     }
 
     public abstract void afiseazaComanda();
+
+    public int getUtilizatorId() {
+        return utilizatorId;
+    }
+    public void setNumeClient(String numeClient) {
+        this.numeClient = numeClient;
+    }
+
+    public void setTotal(double recalculat) {
+        this.total = recalculat;
+    }
 }

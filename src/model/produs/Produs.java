@@ -1,12 +1,24 @@
 package model.produs;
 
 public class Produs {
+    private int id;
     private String nume;
     private double pret;
     private int gramaj; // în grame
     private boolean disponibil;
     private CategorieProdus categorie;
 
+    // Constructor cu ID (pentru când luăm produsul din DB sau îl folosim într-o comandă)
+    public Produs(int id, String nume, double pret, int gramaj, boolean disponibil, CategorieProdus categorie) {
+        this.id = id;
+        this.nume = nume;
+        this.pret = pret;
+        this.gramaj = gramaj;
+        this.disponibil = disponibil;
+        this.categorie = categorie;
+    }
+
+    // Constructor fără ID (opțional)
     public Produs(String nume, double pret, int gramaj, boolean disponibil, CategorieProdus categorie) {
         this.nume = nume;
         this.pret = pret;
@@ -15,7 +27,15 @@ public class Produs {
         this.categorie = categorie;
     }
 
+    public static Produs getProdusById(int idDeTest) {
+        return Produs.getProdusById(idDeTest);
+    }
+
     // Getteri
+    public int getId() {
+        return id;
+    }
+
     public String getNume() {
         return nume;
     }
@@ -37,6 +57,10 @@ public class Produs {
     }
 
     // Setteri
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setNume(String nume) {
         this.nume = nume;
     }

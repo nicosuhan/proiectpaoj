@@ -1,163 +1,108 @@
 package main;
 
-import model.user.Admin;
-import model.user.Client;
-
-import model.produs.*;
-import model.local.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import model.comanda.ComandaLivrare;
-import model.comanda.ComandaRestaurant;
+import model.comanda.*;
 import model.personal.Livrator;
 import model.personal.Ospatar;
 import model.produs.*;
-import model.comanda.Comanda;
+import model.service.ComandaService;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        // ACTIUNEA 1: Creăm userii (client și admin)
-        System.out.println("=== LISTA USERI ===");
-        Client client1 = new Client(1, "Ana Popescu", "ana@email.com", "Strada Florilor nr. 10", "0741234567", 28);
-        Client client2 = new Client(2, "George Iacob", "george@email.com", "Strada Trandafirilor nr. 7", "0758765432", 34);
-        Admin admin1 = new Admin(99, "Mihai Admin", "mihai@admin.com");
-        System.out.println(client1);
-        System.out.println(admin1);
+        ComandaService comandaService = new ComandaService();
+        CategorieProdus categorie = new FastFood();
 
-// ACTIUNEA 2: Creăm categoriile de produse
-        CategorieProdus fastFood = new FastFood();
-        CategorieProdus japonez = new Japonez();
-        CategorieProdus traditional = new Traditional();
-        CategorieProdus vegetarian = new Vegetarian();
+        List<Comanda> listaComenzi = new ArrayList<>();
+        Set<Integer> idComenzi = new HashSet<>();
 
-// ACTIUNEA 3: Creăm produsele
-        Produs burger = new Produs("Burger", 24.99, 250, true, fastFood);
-        Produs pizza = new Produs("Pizza", 29.99, 400, true, fastFood);
-        Produs sushi = new Produs("Sushi cu somon", 42.50, 200, true, japonez);
-        Produs ramen = new Produs("Ramen clasic", 38.00, 350, false, japonez);
-        Produs sarmale = new Produs("Sarmale", 32.00, 300, true, traditional);
-        Produs ciorba = new Produs("Ciorbă de burtă", 28.00, 350, true, traditional);
-        Produs salata = new Produs("Salată cu tofu", 21.00, 250, true, vegetarian);
-        Produs hummus = new Produs("Hummus cu legume", 18.50, 200, true, vegetarian);
+        // === Produse existente ===
+        Produs p1 = new Produs(1, "Cheeseburger", 15.0, 250, true, categorie);
+        Produs p2 = new Produs(2, "Cartofi prăjiți", 8.0, 150, true, categorie);
+        Produs p3 = new Produs(3, "Sushi Nigiri", 22.0, 180, true, new Japonez());
+        Produs p4 = new Produs(4, "Ramen", 25.0, 350, true, new Japonez());
+        Produs p5 = new Produs(5, "Cola 0.5L", 6.0, 500, true, categorie);
 
-// ACTIUNEA 4: Creăm meniurile și adăugăm produse în ele
-        Meniu meniu1 = new Meniu(1, "Meniu Fast & Japonez");
-        meniu1.adaugaProdus(burger);
-        meniu1.adaugaProdus(pizza);
-        meniu1.adaugaProdus(sushi);
-        meniu1.adaugaProdus(ramen);
+        // === Personal ===
+        Livrator livrator = new Livrator(3, "Alin Varga", "masina", "Sector 3");
+        Ospatar ospatar = new Ospatar(3, "Simona Crețu", 4, "seara");
 
-        Meniu meniu2 = new Meniu(2, "Meniu Traditional & Vegetarian");
-        meniu2.adaugaProdus(sarmale);
-        meniu2.adaugaProdus(ciorba);
-        meniu2.adaugaProdus(salata);
-        meniu2.adaugaProdus(hummus);
+        // === Comenzi ID 10–17 ===
+        ComandaLivrare c1 = new ComandaLivrare(10, 1, "Strada 1", 30, livrator);
+        c1.adaugaProdus(p1);
+        c1.adaugaProdus(p2);
 
-// COLECTIE 1: List<Produs> în fiecare meniu → sortabilă
+        ComandaRestaurant c2 = new ComandaRestaurant(11, 2, 2, true, ospatar);
+        c2.adaugaProdus(p3);
 
-// ACTIUNEA 5: Creăm localurile și asociem meniurile
-        Local local1 = new Local(1, "Bistro Urban", "Strada Libertății 10", meniu1);
-        Local local2 = new Local(2, "Casa Bunicii", "Bulevardul Revoluției 45", meniu2);
+        ComandaRestaurant c3 = new ComandaRestaurant(12, 3, 4, false, ospatar);
+        c3.adaugaProdus(p4);
+        c3.adaugaProdus(p5);
 
-// ACTIUNEA 6: Afișăm detalii despre localuri și meniuri
-        System.out.println("=== LOCALURI ȘI MENIURI ===\n");
-        local1.afiseazaDetalii();
-        System.out.println();
-        local2.afiseazaDetalii();
+        ComandaLivrare c4 = new ComandaLivrare(13, 4, "Str. Zambilei 7", 20, livrator);
+        c4.adaugaProdus(p2);
+        c4.adaugaProdus(p5);
 
-// ACTIUNEA 7: Sortăm produsele din meniu după preț
-        System.out.println("\n=== TEST SORTARE PRODUSE DUPĂ PREȚ ===");
-        local1.getMeniu().sorteazaProduseDupaPret();
+        ComandaRestaurant c5 = new ComandaRestaurant(14, 5, 1, false, ospatar);
+        c5.adaugaProdus(p3);
+        c5.adaugaProdus(p5);
 
-// ACTIUNEA 8: Filtrăm produsele disponibile
-        System.out.println("\n=== TEST FILTRARE PRODUSE DISPONIBILE ===");
-        local2.getMeniu().filtreazaProduseDisponibile();
+        ComandaLivrare c6 = new ComandaLivrare(15, 2, "Str. Unirii 45", 25, livrator);
+        c6.adaugaProdus(p4);
+        c6.adaugaProdus(p1);
 
-// ACTIUNEA 9: Creăm personalul – ospătar și livrator
-        Ospatar ospatar = new Ospatar(1, "Mihai Stancu", 4, "zi");
-        Livrator livrator = new Livrator(2, "Alina Dobre", "bicicletă", "Sector 2");
+        ComandaLivrare c7 = new ComandaLivrare(16, 3, "Str. Viitorului 99", 28, livrator);
+        c7.adaugaProdus(p1);
+        c7.adaugaProdus(p5);
 
-// ACTIUNEA 10: Creăm comenzi (restaurant și livrare)
-        ComandaRestaurant comandaRestaurant = new ComandaRestaurant(
-                1001, client1.getNume(), 5, true, ospatar
-        );
-        comandaRestaurant.adaugaProdus(burger);
-        comandaRestaurant.adaugaProdus(sushi);
+        ComandaRestaurant c8 = new ComandaRestaurant(17, 1, 6, true, ospatar);
+        c8.adaugaProdus(p2);
+        c8.adaugaProdus(p3);
 
-        ComandaLivrare comandaLivrare = new ComandaLivrare(
-                1002, client1.getNume(), client2.getAdresa(), 35, livrator
-        );
-        comandaLivrare.adaugaProdus(sarmale);
-        comandaLivrare.adaugaProdus(hummus);
+        // === Salvare în DB și colectii
+        List<Comanda> toateComenzile = List.of(c1, c2, c3, c4, c5, c6, c7, c8);
+        for (Comanda c : toateComenzile) {
+            comandaService.addComanda(c);
+            listaComenzi.add(c);
+            idComenzi.add(c.getId());
+        }
 
-// ACTIUNEA 11: Afișăm comenzile create
-        System.out.println("=== COMENZI ===\n");
-        comandaRestaurant.afiseazaComanda();
-        comandaLivrare.afiseazaComanda();
+        // === Afișare comenzi
+        System.out.println("\n📦 Toate comenzile:");
+        listaComenzi.forEach(Comanda::afiseazaComanda);
 
-// COLECTIE 2: List<Comanda> în clasa Client → nesortată, dar gestionabilă
+        System.out.println("\n🔎 Comenzi cu livrator:");
+        listaComenzi.stream()
+                .filter(c -> c instanceof ComandaLivrare)
+                .forEach(Comanda::afiseazaComanda);
 
-// ACTIUNEA 12: Adăugăm comenzile în lista clientului și afișăm istoricul
-        client1.adaugaComanda(comandaRestaurant);
-        client1.adaugaComanda(comandaLivrare);
-        System.out.println("\n=== ISTORIC COMENZI CLIENT1 ===");
-        client1.afiseazaComenzi();
+        System.out.println("\n📊 Comenzi sortate după total:");
+        listaComenzi.stream()
+                .sorted(Comparator.comparingDouble(Comanda::getTotal))
+                .forEach(c -> System.out.println("ID: " + c.getId() + " | Total: " + c.getTotal()));
 
-// ACTIUNEA 13: Adăugăm încă două comenzi și le afișăm din nou
-        ComandaRestaurant comanda2 = new ComandaRestaurant(
-                1003, client1.getNume(), 7, false, ospatar
-        );
-        comanda2.adaugaProdus(pizza);
-        comanda2.adaugaProdus(ciorba);
+        double totalGlobal = listaComenzi.stream().mapToDouble(Comanda::getTotal).sum();
+        System.out.println("\n💰 Total global: " + totalGlobal + " lei");
 
-        ComandaLivrare comanda3 = new ComandaLivrare(
-                1004, client1.getNume(), "Strada Florilor nr. 10", 25, livrator
-        );
-        comanda3.adaugaProdus(ramen);
+        System.out.println("\n🧾 Produse din comanda 10:");
+        c1.getProduse().forEach(p -> System.out.println(p.getNume()));
 
-        client1.adaugaComanda(comanda2);
-        client1.adaugaComanda(comanda3);
-        System.out.println("\n=== ISTORIC COMENZI CLIENT1 DUPĂ COMENZI NOI ===");
-        client1.afiseazaComenzi();
+        System.out.println("\n🔍 Comenzi care conțin Sushi Nigiri:");
+        listaComenzi.stream()
+                .filter(c -> c.getProduse().stream().anyMatch(p -> p.getNume().equals("Sushi Nigiri")))
+                .forEach(c -> System.out.println("Comandă ID: " + c.getId()));
 
-//ACTIUNEA 14: Schimbăm mijlocul de transport al livratorului
-        livrator.setMijlocTransport("mașină");
-        System.out.println("Transport actualizat: " + livrator.getMijlocTransport());
+        // === Șterge comenzile 16 și 17 pentru a permite rerulare
+        comandaService.deleteComandaById(16);
+        comandaService.deleteComandaById(17);
+        listaComenzi.removeIf(c -> c.getId() == 16 || c.getId() == 17);
+        idComenzi.remove(16);
+        idComenzi.remove(17);
 
-// ACTIUNEA 15: Facem produsul Ramen disponibil și verificăm
-        ramen.setDisponibil(true);
-        System.out.println("Produsul Ramen este acum disponibil? " + ramen.isDisponibil());
+        System.out.println("\n🗑️ Comenzile 16 și 17 au fost șterse.");
 
-// ACTIUNEA 16: Schimbăm statusul ultimei comenzi în "livrată"
-        System.out.println("\n=== ACTUALIZARE STATUS COMANDĂ ===");
-        comanda3.setStatus("livrată");
-        comanda3.afiseazaComanda();
-
-// ACTIUNEA 17: Afișăm descriere detaliată pentru categoria FastFood
-        System.out.println("\n=== DESCRIERE DETALIATĂ CATEGORIE ===");
-        System.out.println(((FastFood) fastFood).descriereDetaliata());
-
-// ACTIUNEA 18: Afișăm informații despre livrator
-        System.out.println("\n=== INFORMAȚII LIVRATOR ===");
-        System.out.println(livrator);
-
-// ACTIUNEA 19: Afișăm informații despre ospătar
-        System.out.println("\n=== INFORMAȚII OSPĂTAR ===");
-        System.out.println(ospatar);
-
-//ACTIUNEA 20: Schimbăm tura ospătarului și o afișăm
-        ospatar.setTura("seară");
-        System.out.println("Tura actualizată pentru ospătar: " + ospatar.getTura());
-
-
-
-
-
-
-
-
-
-
+        System.out.println("\n📋 Comenzi rămase:");
+        listaComenzi.forEach(c -> System.out.println("Comandă ID: " + c.getId()));
     }
 }
